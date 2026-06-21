@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111827" />
+<meta name="description" content="ScholarMatch — Sistem barter responden untuk mahasiswa skripsi." />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon-192.png" type="image/png" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<title>ScholarMatch — Skripsi Match</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+/* =========================================================
+   DESIGN TOKENS — Premium Academic Theme
+========================================================= */
+:root{
+  --white:#FFFFFF;
+  --gray-50:#F5F5F5;
+  --gray-100:#ECEDEF;
+  --gray-300:#D1D5DB;
+  --gray-dark:#4B5563;
+  --black:#111827;
+  --gold:#D4AF37;
+  --gold-soft:#F4E7C1;
+  --green:#10B981;
+  --green-soft:#E7F7F0;
+  --red:#DC2626;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --radius-sm:10px;
+  --shadow-card:0 2px 10px rgba(17,24,39,.06), 0 1px 2px rgba(17,24,39,.04);
+  --shadow-pop:0 12px 28px rgba(17,24,39,.14);
+  --bg: var(--gray-50);
+  --surface: var(--white);
+  --text-main: var(--black);
+  --text-sub: var(--gray-dark);
+  --border-col: var(--gray-100);
+  --nav-bg: rgba(255,255,255,.92);
+}
+body.dark-mode{
+  --bg:#0B0E14;
+  --surface:#161B26;
+  --text-main:#F3F4F6;
+  --text-sub:#9CA3AF;
+  --border-col:#262C3A;
+  --gray-100:#1E2430;
+  --nav-bg: rgba(22,27,38,.92);
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text-main);
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background .25s ease, color .25s ease;
+}
+h1,h2,h3,h4,h5,.font-display{font-family:'Poppins',sans-serif;}
+a{text-decoration:none;}
+button{font-family:inherit;}
+::selection{background:var(--gold-soft);}
+
+/* Scrollbar tidy */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:10px;}
+
+/* =========================================================
+   APP SHELL
+========================================================= */
+#app{
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  background:var(--bg);
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ---------- Splash ---------- */
+#splash-screen{
+  position:fixed; inset:0; z-index:9999;
+  background:linear-gradient(160deg,var(--black) 0%, #1F2532 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fff;
+}
+.splash-logo{
+  width:96px;height:96px;border-radius:28px;
+  background:linear-gradient(145deg,#1c2233,#0d111a);
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Poppins',sans-serif;font-weight:800;font-size:42px;color:var(--gold);
+  box-shadow:0 0 0 8px rgba(212,175,55,.08);
+  animation:pop .7s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.splash-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:24px;margin-top:18px;letter-spacing:.5px;}
+.splash-sub{font-size:13px;color:#9CA3AF;margin-top:4px;letter-spacing:1.5px;text-transform:uppercase;}
+.splash-loader{
+  margin-top:34px;width:130px;height:3px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;
+}
+.splash-loader::after{
+  content:'';display:block;height:100%;width:40%;background:var(--gold);
+  animation:loadbar 1.1s ease-in-out infinite;
+}
+@keyframes loadbar{0%{transform:translateX(-100%);}100%{transform:translateX(330%);}}
+
+/* ---------- Auth ---------- */
+#auth-screen{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:32px 26px 40px;background:var(--bg);
+}
+.auth-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.auth-brand .mark{
+  width:42px;height:42px;border-radius:12px;background:var(--black);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-family:'Poppins',sans-serif;
+}
+.auth-brand .name{font-family:'Poppins',sans-serif;font-weight:700;font-size:19px;color:var(--text-main);}
+.auth-brand .name span{color:var(--gold);}
+.auth-card{
+  background:var(--surface);border-radius:var(--radius-lg);padding:26px 22px;box-shadow:var(--shadow-card);
+  border:1px solid var(--border-col);
+}
+.auth-card h2{font-size:21px;font-weight:700;margin-bottom:4px;}
+.auth-card p.lead-sm{font-size:13px;color:var(--text-sub);margin-bottom:20px;}
+.form-floating-sm label{font-size:13px;color:var(--text-sub);}
+.input-academic{
+  width:100%;border:1.5px solid var(--gray-100);background:var(--bg);color:var(--text-main);
+  border-radius:var(--radius-sm);padding:12px 14px;font-size:14.5px;margin-bottom:12px;transition:.15s;
+}
+.input-academic:focus{outline:none;border-color:var(--gold);background:var(--surface);box-shadow:0 0 0 3px rgba(212,175,55,.15);}
+.field-label{font-size:12.5px;font-weight:600;color:var(--text-sub);margin-bottom:6px;display:block;}
+.field-error{font-size:11.5px;color:var(--red);margin:-8px 0 10px 2px;display:none;}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),#C49A2C);color:var(--black);border:none;font-weight:700;
+  border-radius:var(--radius-sm);padding:13px;width:100%;font-size:14.5px;letter-spacing:.2px;
+  box-shadow:0 6px 16px rgba(212,175,55,.3);
+}
+.btn-gold:active{transform:scale(.98);}
+.btn-outline-academic{
+  background:transparent;border:1.5px solid var(--border-col);color:var(--text-main);font-weight:600;
+  border-radius:var(--radius-sm);padding:11px;width:100%;font-size:14px;
+}
+.auth-switch{text-align:center;font-size:13.5px;color:var(--text-sub);margin-top:18px;}
+.auth-switch b{color:var(--black);}
+body.dark-mode .auth-switch b{color:var(--gold);}
+.remember-row{display:flex;align-items:center;justify-content:space-between;margin:2px 0 16px;font-size:13px;color:var(--text-sub);}
+.remember-row label{display:flex;align-items:center;gap:7px;cursor:pointer;}
+
+/* ---------- Top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:50;background:var(--nav-bg);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border-col);
+}
+.topbar .brand{display:flex;align-items:center;gap:9px;}
+.topbar .mark{width:32px;height:32px;border-radius:9px;background:var(--black);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Poppins',sans-serif;font-size:14px;}
+.topbar .brand-text{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;}
+.topbar .brand-text span{color:var(--gold);}
+.topbar .actions{display:flex;gap:8px;}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--border-col);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;color:var(--text-main);position:relative;cursor:pointer;
+}
+.icon-btn .dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--surface);display:none;}
+
+/* ---------- Content / views ---------- */
+.view{display:none;padding:18px 16px 100px;animation:fadein .25s ease;}
+.view.active{display:block;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.section-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:17px;margin:18px 0 12px;display:flex;align-items:center;justify-content:between;gap:6px;}
+.section-title .see-all{margin-left:auto;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;}
+.greeting-eyebrow{font-size:12px;color:var(--text-sub);font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+.greeting-name{font-family:'Poppins',sans-serif;font-size:21px;font-weight:700;margin-top:2px;}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-md);padding:13px 10px;text-align:center;
+  box-shadow:var(--shadow-card);
+}
+.stat-card .val{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;}
+.stat-card .lbl{font-size:10.5px;color:var(--text-sub);margin-top:2px;font-weight:600;}
+.stat-card.gold .val{color:var(--gold);}
+.stat-card.green .val{color:var(--green);}
+
+/* Survey Card */
+.survey-card{
+  background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-lg);padding:16px;margin-bottom:13px;
+  box-shadow:var(--shadow-card); cursor:pointer; transition:.15s;
+}
+.survey-card:active{transform:scale(.985);}
+.survey-card .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.cat-chip{
+  font-size:10.5px;font-weight:700;background:var(--gold-soft);color:#8A6D14;padding:4px 9px;border-radius:30px;
+  display:inline-block;
+}
+body.dark-mode .cat-chip{background:rgba(212,175,55,.16);color:var(--gold);}
+.survey-card h4{font-size:15px;font-weight:700;margin:9px 0 4px;font-family:'Poppins',sans-serif;}
+.survey-card .desc{font-size:12.5px;color:var(--text-sub);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.survey-meta{display:flex;align-items:center;gap:14px;margin-top:11px;font-size:11.5px;color:var(--text-sub);}
+.survey-meta span{display:flex;align-items:center;gap:4px;}
+.progress-academic{height:7px;border-radius:30px;background:var(--gray-100);overflow:hidden;margin-top:11px;}
+.progress-academic .bar{height:100%;background:linear-gradient(90deg,var(--green),#34D399);border-radius:30px;transition:width .4s ease;}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;margin-top:5px;color:var(--text-sub);font-weight:600;}
+.owner-tag{font-size:11px;color:var(--text-sub);display:flex;align-items:center;gap:5px;margin-top:10px;}
+.avatar-mini{width:20px;height:20px;border-radius:50%;background:var(--black);color:var(--gold);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* Search & filters */
+.search-bar{
+  display:flex;align-items:center;gap:9px;background:var(--surface);border:1.5px solid var(--border-col);border-radius:var(--radius-sm);
+  padding:11px 14px;margin-bottom:12px;
+}
+.search-bar input{border:none;outline:none;flex:1;background:transparent;color:var(--text-main);font-size:14px;}
+.filter-chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;}
+.filter-chip-row::-webkit-scrollbar{display:none;}
+.f-chip{
+  flex:none;padding:7px 14px;border-radius:30px;font-size:12.5px;font-weight:600;border:1.5px solid var(--border-col);
+  background:var(--surface);color:var(--text-sub);white-space:nowrap;cursor:pointer;
+}
+.f-chip.active{background:var(--black);border-color:var(--black);color:var(--gold);}
+
+/* Form */
+.form-card{background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-card);}
+.form-card label.field-label{margin-top:4px;}
+select.input-academic{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234B5563' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+textarea.input-academic{resize:vertical;min-height:90px;}
+
+/* Bottom nav */
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:var(--nav-bg);backdrop-filter:blur(10px);
+  border-top:1px solid var(--border-col);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:60;
+}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text-sub);font-size:10px;font-weight:600;flex:1;cursor:pointer;padding:4px 0;}
+.nav-item i{font-size:19px;}
+.nav-item.active{color:var(--gold);}
+.nav-item.upload-fab{position:relative;}
+.nav-item.upload-fab .fab-circle{
+  width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#C49A2C);display:flex;align-items:center;justify-content:center;
+  color:var(--black);font-size:19px;margin-bottom:2px;box-shadow:0 6px 14px rgba(212,175,55,.4);
+}
+
+/* Overlay panels (full screen) */
+.overlay-panel{
+  position:fixed;inset:0;max-width:480px;margin:0 auto;background:var(--bg);z-index:200;display:none;flex-direction:column;
+  animation:slideup .25s ease;
+}
+.overlay-panel.active{display:flex;}
+@keyframes slideup{from{transform:translateY(16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.overlay-head{
+  display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--border-col);background:var(--surface);
+}
+.overlay-head h3{font-size:16px;font-weight:700;margin:0;font-family:'Poppins',sans-serif;}
+.overlay-back{width:36px;height:36px;border-radius:50%;border:1px solid var(--border-col);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.overlay-body{flex:1;overflow-y:auto;padding:18px 16px 40px;}
+
+/* badges */
+.badge-pill{
+  display:inline-flex;align-items:center;gap:6px;background:var(--gray-100);padding:8px 13px;border-radius:30px;font-size:12px;font-weight:700;margin:4px 4px 0 0;
+}
+.badge-pill.unlocked{background:var(--gold-soft);color:#8A6D14;}
+body.dark-mode .badge-pill.unlocked{background:rgba(212,175,55,.15);color:var(--gold);}
+
+/* profile */
+.profile-head{display:flex;flex-direction:column;align-items:center;padding:14px 0 22px;}
+.profile-avatar{
+  width:84px;height:84px;border-radius:50%;background:linear-gradient(145deg,var(--black),#222938);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;font-family:'Poppins',sans-serif;
+  border:3px solid var(--gold-soft);
+}
+.profile-head h3{margin:12px 0 1px;font-size:18px;font-weight:700;}
+.profile-head p{margin:0;color:var(--text-sub);font-size:13px;}
+.menu-row{
+  display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-md);
+  padding:14px;margin-bottom:10px;cursor:pointer;
+}
+.menu-row i.lead-icon{width:34px;height:34px;border-radius:10px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;color:var(--text-main);font-size:15px;}
+.menu-row .txt{flex:1;font-size:14px;font-weight:600;}
+.menu-row .sub{font-size:11.5px;color:var(--text-sub);font-weight:400;}
+.menu-row i.chev{color:var(--text-sub);}
+
+/* leaderboard */
+.lb-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:9px;}
+.lb-rank{width:26px;text-align:center;font-weight:800;font-family:'Poppins',sans-serif;color:var(--text-sub);}
+.lb-row.top1 .lb-rank{color:var(--gold);} .lb-row.top2 .lb-rank{color:#9CA3AF;} .lb-row.top3 .lb-rank{color:#B08D57;}
+.lb-name{flex:1;}
+.lb-name b{display:block;font-size:13.5px;}
+.lb-name span{font-size:11px;color:var(--text-sub);}
+.lb-pts{font-weight:700;color:var(--gold);font-size:13px;}
+
+/* notifications */
+.notif-item{display:flex;gap:11px;background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-md);padding:13px;margin-bottom:9px;}
+.notif-item.unread{border-left:3px solid var(--gold);}
+.notif-icon{width:36px;height:36px;border-radius:10px;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:15px;flex:none;}
+body.dark-mode .notif-icon{background:rgba(16,185,129,.14);}
+.notif-item .nt{font-size:13px;font-weight:600;}
+.notif-item .ns{font-size:11.5px;color:var(--text-sub);margin-top:2px;}
+.notif-item .ntime{font-size:10.5px;color:var(--text-sub);margin-top:5px;}
+
+/* points history */
+.point-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border-col);}
+.point-row .pi{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none;}
+.point-row.in .pi{background:var(--green-soft);color:var(--green);}
+.point-row.out .pi{background:#FEE2E2;color:var(--red);}
+body.dark-mode .point-row.in .pi{background:rgba(16,185,129,.15);}
+body.dark-mode .point-row.out .pi{background:rgba(220,38,38,.15);}
+.point-row .pt{flex:1;}
+.point-row .pt b{font-size:13.5px;display:block;}
+.point-row .pt span{font-size:11px;color:var(--text-sub);}
+.point-row .amt{font-weight:800;font-size:14px;}
+.point-row.in .amt{color:var(--green);}
+.point-row.out .amt{color:var(--red);}
+
+/* forum */
+.forum-post{background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-md);padding:14px;margin-bottom:10px;}
+.forum-post h5{font-size:14px;font-weight:700;margin:0 0 5px;}
+.forum-post p{font-size:12.5px;color:var(--text-sub);margin:0 0 8px;line-height:1.5;}
+.forum-post .meta{font-size:11px;color:var(--text-sub);display:flex;gap:12px;align-items:center;}
+
+/* toast */
+#toast-box{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:999;width:90%;max-width:420px;}
+.toast-academic{
+  background:var(--black);color:#fff;padding:13px 16px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:600;
+  display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-pop);margin-bottom:8px;border-left:4px solid var(--gold);
+  animation:toastin .25s ease;
+}
+@keyframes toastin{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.toast-academic.success{border-left-color:var(--green);}
+.toast-academic.error{border-left-color:var(--red);}
+
+.empty-state{text-align:center;padding:50px 20px;color:var(--text-sub);}
+.empty-state i{font-size:38px;color:var(--gray-300);margin-bottom:10px;display:block;}
+.empty-state p{font-size:13px;margin:0;}
+
+.fab-modal-overlay{
+  position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:300;display:none;align-items:flex-end;justify-content:center;
+}
+.fab-modal-overlay.active{display:flex;}
+.fab-modal{
+  background:var(--surface);max-width:480px;width:100%;border-radius:22px 22px 0 0;padding:22px 18px 30px;
+  animation:slideup .22s ease;
+}
+.fab-modal h4{font-size:16px;font-weight:700;margin-bottom:14px;}
+.dragger{width:40px;height:4px;background:var(--gray-300);border-radius:10px;margin:0 auto 16px;}
+
+.swatch{width:18px;height:18px;border-radius:5px;display:inline-block;vertical-align:middle;margin-right:6px;}
+
+/* ---------- In-app Questionnaire (preview + fill) ---------- */
+.q-card{
+  background:var(--surface);border:1px solid var(--border-col);border-radius:var(--radius-md);padding:15px;margin-bottom:12px;
+}
+.q-card .q-num{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.4px;}
+.q-card .q-text{font-size:13.5px;font-weight:600;margin:5px 0 12px;line-height:1.45;}
+.q-options{display:flex;flex-direction:column;gap:8px;}
+.q-option{
+  display:flex;align-items:center;gap:11px;border:1.5px solid var(--border-col);border-radius:var(--radius-sm);
+  padding:10px 12px;cursor:pointer;font-size:13px;font-weight:500;transition:.15s;
+}
+.q-option:active{transform:scale(.99);}
+.q-option .radio-dot{
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-300);flex:none;position:relative;transition:.15s;
+}
+.q-option.selected{border-color:var(--gold);background:var(--gold-soft);}
+body.dark-mode .q-option.selected{background:rgba(212,175,55,.12);}
+.q-option.selected .radio-dot{border-color:var(--gold);}
+.q-option.selected .radio-dot::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;background:var(--gold);
+}
+.q-option .opt-score{font-weight:700;color:var(--gold);margin-right:2px;}
+.questionnaire-meta{
+  background:var(--gray-50);border:1px dashed var(--gray-300);border-radius:var(--radius-sm);padding:12px 14px;font-size:12.5px;color:var(--text-sub);margin-bottom:14px;
+}
+body.dark-mode .questionnaire-meta{background:var(--gray-100);}
+.questionnaire-meta b{color:var(--text-main);}
+.scale-legend-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.scale-legend-chip{font-size:11px;font-weight:600;background:var(--surface);border:1px solid var(--border-col);padding:4px 9px;border-radius:30px;}
+.fill-progress-sticky{
+  position:sticky;top:0;background:var(--bg);padding-bottom:10px;z-index:5;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     SPLASH SCREEN
+============================================================= -->
+<div id="splash-screen">
+  <div class="splash-logo">S</div>
+  <div class="splash-title">Scholar<span style="color:#D4AF37">Match</span></div>
+  <div class="splash-sub">Skripsi Match</div>
+  <div class="splash-loader"></div>
+</div>
+
+<div id="toast-box"></div>
+
+<div id="app">
+
+  <!-- ============================================================
+       AUTH SCREEN
+  ============================================================= -->
+  <div id="auth-screen" style="display:none;">
+    <div class="auth-brand">
+      <div class="mark">S</div>
+      <div class="name">Scholar<span>Match</span></div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login-card" class="auth-card">
+      <h2>Selamat Datang Kembali</h2>
+      <p class="lead-sm">Masuk untuk lanjut membantu penelitian sesama mahasiswa.</p>
+
+      <label class="field-label">Email</label>
+      <input type="email" id="login-email" class="input-academic" placeholder="nama@kampus.ac.id">
+      <div class="field-error" id="err-login-email">Format email tidak valid.</div>
+
+      <label class="field-label">Password</label>
+      <input type="password" id="login-password" class="input-academic" placeholder="Minimal 8 karakter">
+      <div class="field-error" id="err-login-password">Password salah atau belum diisi.</div>
+
+      <div class="remember-row">
+        <label><input type="checkbox" id="login-remember"> Tetap login</label>
+        <span style="cursor:pointer;color:var(--gold);font-weight:600;" onclick="showToast('Hubungi admin kampus untuk reset password ya 🙂','info')">Lupa password?</span>
+      </div>
+
+      <button class="btn-gold" onclick="handleLogin()">Masuk</button>
+      <p class="auth-switch">Belum punya akun? <b onclick="toggleAuth('register')" style="cursor:pointer;">Daftar di sini</b></p>
+      <p class="auth-switch" style="margin-top:8px;font-size:11.5px;">Demo: budi@kampus.ac.id / budi12345</p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="register-card" class="auth-card" style="display:none;">
+      <h2>Buat Akun Baru</h2>
+      <p class="lead-sm">Gabung dan mulai bertukar bantuan responden penelitian.</p>
+
+      <label class="field-label">Nama Lengkap</label>
+      <input type="text" id="reg-name" class="input-academic" placeholder="Nama lengkap kamu">
+      <div class="field-error" id="err-reg-name">Nama wajib diisi.</div>
+
+      <label class="field-label">Email</label>
+      <input type="email" id="reg-email" class="input-academic" placeholder="nama@kampus.ac.id atau Gmail">
+      <div class="field-error" id="err-reg-email">Email tidak valid / sudah terdaftar.</div>
+
+      <label class="field-label">Password</label>
+      <input type="password" id="reg-password" class="input-academic" placeholder="Minimal 8 karakter">
+      <div class="field-error" id="err-reg-password">Password minimal 8 karakter.</div>
+
+      <label class="field-label">Universitas <span style="font-weight:400;">(opsional)</span></label>
+      <input type="text" id="reg-univ" class="input-academic" placeholder="cth. Universitas Diponegoro">
+
+      <label class="field-label">Program Studi <span style="font-weight:400;">(opsional)</span></label>
+      <input type="text" id="reg-major" class="input-academic" placeholder="cth. Manajemen">
+
+      <button class="btn-gold" onclick="handleRegister()">Daftar Sekarang</button>
+      <p class="auth-switch">Sudah punya akun? <b onclick="toggleAuth('login')" style="cursor:pointer;">Masuk</b></p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN APP (after login)
+  ============================================================= -->
+  <div id="main-app" style="display:none;">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="mark">S</div>
+        <div class="brand-text">Scholar<span>Match</span></div>
+      </div>
+      <div class="actions">
+        <div class="icon-btn" onclick="toggleDarkMode()"><i class="bi bi-moon-stars" id="dark-icon"></i></div>
+        <div class="icon-btn" onclick="openOverlay('notif')"><i class="bi bi-bell"></i><span class="dot" id="notif-dot"></span></div>
+      </div>
+    </div>
+
+    <!-- ---------------- DASHBOARD ---------------- -->
+    <div class="view active" id="view-dashboard">
+      <div class="greeting-eyebrow">Selamat datang,</div>
+      <div class="greeting-name" id="dash-username">Mahasiswa</div>
+
+      <div class="stat-grid">
+        <div class="stat-card gold"><div class="val" id="stat-points">0</div><div class="lbl">Poin Saya</div></div>
+        <div class="stat-card"><div class="val" id="stat-active-surveys">0</div><div class="lbl">Survei Aktif</div></div>
+        <div class="stat-card green"><div class="val" id="stat-respondents">0</div><div class="lbl">Responden</div></div>
+      </div>
+
+      <div class="section-title">Direkomendasikan Untukmu <span class="see-all" onclick="goView('search')">Lihat semua</span></div>
+      <div id="dash-recommend-list"></div>
+
+      <div class="section-title">Survei Terbaru</div>
+      <div id="dash-latest-list"></div>
+
+      <div class="section-title" style="margin-top:24px;">
+        <i class="bi bi-trophy-fill" style="color:var(--gold);"></i>&nbsp;Top Kontributor
+        <span class="see-all" onclick="openOverlay('leaderboard')">Lihat semua</span>
+      </div>
+      <div id="dash-leaderboard-mini"></div>
+    </div>
+
+    <!-- ---------------- SEARCH ---------------- -->
+    <div class="view" id="view-search">
+      <div class="section-title" style="margin-top:4px;">Cari Survei</div>
+      <div class="search-bar">
+        <i class="bi bi-search" style="color:var(--text-sub);"></i>
+        <input type="text" id="search-input" placeholder="Cari judul penelitian..." oninput="renderSearchResults()">
+      </div>
+      <div class="filter-chip-row" id="cat-filter-row"></div>
+      <div class="filter-chip-row" id="target-filter-row"></div>
+      <div id="search-results-list" style="margin-top:8px;"></div>
+    </div>
+
+    <!-- ---------------- UPLOAD ---------------- -->
+    <div class="view" id="view-upload">
+      <div class="section-title" style="margin-top:4px;">Upload Survei</div>
+      <div class="form-card">
+        <label class="field-label">Judul Penelitian</label>
+        <input type="text" id="up-title" class="input-academic" placeholder="cth. Pengaruh Media Sosial terhadap Minat Beli">
+
+        <label class="field-label">Deskripsi Penelitian</label>
+        <textarea id="up-desc" class="input-academic" placeholder="Jelaskan singkat tujuan penelitianmu..."></textarea>
+
+        <label class="field-label">Kategori</label>
+        <select id="up-category" class="input-academic">
+          <option value="Ekonomi & Bisnis">Ekonomi & Bisnis</option>
+          <option value="Psikologi">Psikologi</option>
+          <option value="Pendidikan">Pendidikan</option>
+          <option value="Teknik & Sains">Teknik & Sains</option>
+          <option value="Kesehatan">Kesehatan</option>
+          <option value="Sosial & Politik">Sosial & Politik</option>
+          <option value="Komunikasi">Komunikasi</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+
+        <label class="field-label">Kriteria / Target Responden</label>
+        <input type="text" id="up-target" class="input-academic" placeholder="cth. Mahasiswa aktif, usia 18-24 tahun">
+
+        <label class="field-label">Jumlah Responden Dibutuhkan</label>
+        <input type="number" id="up-count" class="input-academic" placeholder="cth. 30" min="1">
+
+        <label class="field-label">Teks Kuesioner <span style="font-weight:400;">(tempel format kuesioner di sini)</span></label>
+        <textarea id="up-questionnaire-raw" class="input-academic" style="min-height:160px;font-family:'Courier New',monospace;font-size:12.5px;" placeholder="KUESIONER PENENTUAN BOBOT KRITERIA
+skala: 4
+bobot: 4 = Sangat Penting 3 = Penting 2 = Tidak Penting 1 = Sangat Tidak Penting
+Petunjuk Pengisian:
+Berikan penilaian terhadap tingkat kepentingan setiap kriteria...
+
+1. Seberapa penting biaya sewa akomodasi...?
+2. Seberapa penting jarak akomodasi ke kampus...?
+3. ..."></textarea>
+        <div class="field-error" id="err-up-parse">Format kuesioner tidak terbaca. Pastikan ada baris "skala:", "bobot:", dan daftar pertanyaan bernomor (1. 2. 3. ...).</div>
+
+        <button type="button" class="btn-outline-academic" style="margin-bottom:14px;" onclick="handlePreviewQuestionnaire()"><i class="bi bi-eye"></i> Pratinjau Kuesioner</button>
+
+        <div id="up-questionnaire-preview" style="display:none;"></div>
+
+        <div class="field-error" id="err-up">Lengkapi semua data dengan benar.</div>
+
+        <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:11px 13px;font-size:12px;color:var(--text-sub);margin:6px 0 14px;border:1px dashed var(--gray-300);">
+          <i class="bi bi-coin" style="color:var(--gold);"></i>
+          Mempublikasikan survei membutuhkan <b id="up-cost-preview">0</b> poin (1 poin / responden dibutuhkan). Poin kamu saat ini: <b id="up-balance-preview">0</b>.
+        </div>
+
+        <button class="btn-gold" onclick="handleUploadSurvey()">Publikasikan Survei</button>
+      </div>
+    </div>
+
+    <!-- ---------------- POINTS ---------------- -->
+    <div class="view" id="view-points">
+      <div class="section-title" style="margin-top:4px;">Poin Saya</div>
+      <div class="form-card" style="text-align:center;background:linear-gradient(135deg,var(--black),#1f2533);border:none;">
+        <div style="font-size:12px;color:#B9BFCB;font-weight:600;letter-spacing:.4px;">TOTAL POIN BARTER</div>
+        <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:38px;color:var(--gold);margin-top:6px;" id="points-total-big">0</div>
+        <div style="font-size:11.5px;color:#9CA3AF;margin-top:4px;">1 poin = 1 jasa pengisian survei</div>
+      </div>
+
+      <div class="section-title">Riwayat Poin Masuk</div>
+      <div id="points-in-list" class="form-card"></div>
+
+      <div class="section-title">Riwayat Poin Keluar</div>
+      <div id="points-out-list" class="form-card"></div>
+    </div>
+
+    <!-- ---------------- PROFILE ---------------- -->
+    <div class="view" id="view-profile">
+      <div class="profile-head">
+        <div class="profile-avatar" id="profile-avatar-initial">M</div>
+        <h3 id="profile-name">Nama Mahasiswa</h3>
+        <p id="profile-univ">Universitas — Program Studi</p>
+      </div>
+
+      <div class="section-title" style="margin-top:0;">Lencana Pencapaian</div>
+      <div id="badge-list" style="margin-bottom:18px;"></div>
+
+      <div class="menu-row" onclick="openOverlay('edit-profile')">
+        <i class="bi bi-pencil-square lead-icon"></i>
+        <div class="txt">Edit Profil</div>
+        <i class="bi bi-chevron-right chev"></i>
+      </div>
+      <div class="menu-row" onclick="openOverlay('history')">
+        <i class="bi bi-clock-history lead-icon"></i>
+        <div class="txt">Riwayat Survei</div>
+        <i class="bi bi-chevron-right chev"></i>
+      </div>
+      <div class="menu-row" onclick="openOverlay('forum')">
+        <i class="bi bi-chat-square-text lead-icon"></i>
+        <div class="txt">Forum Diskusi</div>
+        <i class="bi bi-chevron-right chev"></i>
+      </div>
+      <div class="menu-row" onclick="openOverlay('leaderboard')">
+        <i class="bi bi-trophy lead-icon"></i>
+        <div class="txt">Leaderboard</div>
+        <i class="bi bi-chevron-right chev"></i>
+      </div>
+      <div class="menu-row" onclick="toggleDarkMode()">
+        <i class="bi bi-moon-stars lead-icon"></i>
+        <div class="txt">Mode Gelap <span class="sub" id="dark-mode-status">Mati</span></div>
+        <i class="bi bi-chevron-right chev"></i>
+      </div>
+      <div class="menu-row" onclick="handleLogout()" style="border-color:#FCA5A5;">
+        <i class="bi bi-box-arrow-right lead-icon" style="color:var(--red);"></i>
+        <div class="txt" style="color:var(--red);">Keluar Akun</div>
+      </div>
+    </div>
+
+    <!-- bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item active" data-view="dashboard" onclick="goView('dashboard')"><i class="bi bi-house-door-fill"></i>Beranda</div>
+      <div class="nav-item" data-view="search" onclick="goView('search')"><i class="bi bi-search"></i>Cari Survei</div>
+      <div class="nav-item upload-fab" data-view="upload" onclick="goView('upload')">
+        <div class="fab-circle"><i class="bi bi-plus-lg"></i></div>Upload
+      </div>
+      <div class="nav-item" data-view="points" onclick="goView('points')"><i class="bi bi-coin"></i>Poin Saya</div>
+      <div class="nav-item" data-view="profile" onclick="goView('profile')"><i class="bi bi-person-fill"></i>Profil</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       OVERLAY: SURVEY DETAIL
+  ============================================================= -->
+  <div class="overlay-panel" id="overlay-survey">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('survey')"><i class="bi bi-arrow-left"></i></div>
+      <h3>Detail Survei</h3>
+    </div>
+    <div class="overlay-body" id="survey-detail-body"></div>
+  </div>
+
+  <!-- OVERLAY: FILL QUESTIONNAIRE (Google-Forms-like, fully in-app) -->
+  <div class="overlay-panel" id="overlay-fill">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('fill')"><i class="bi bi-arrow-left"></i></div>
+      <h3 id="fill-overlay-title">Isi Kuesioner</h3>
+    </div>
+    <div class="overlay-body" id="fill-form-body"></div>
+  </div>
+
+  <!-- OVERLAY: NOTIFICATIONS -->
+  <div class="overlay-panel" id="overlay-notif">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('notif')"><i class="bi bi-arrow-left"></i></div>
+      <h3>Notifikasi</h3>
+    </div>
+    <div class="overlay-body" id="notif-list"></div>
+  </div>
+
+  <!-- OVERLAY: LEADERBOARD -->
+  <div class="overlay-panel" id="overlay-leaderboard">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('leaderboard')"><i class="bi bi-arrow-left"></i></div>
+      <h3>Leaderboard</h3>
+    </div>
+    <div class="overlay-body">
+      <div class="filter-chip-row" id="lb-filter-row">
+        <div class="f-chip active" data-scope="campus" onclick="setLbScope('campus')">Top Kampus</div>
+        <div class="f-chip" data-scope="national" onclick="setLbScope('national')">Top Nasional</div>
+      </div>
+      <div id="lb-list"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY: PROFILE HISTORY -->
+  <div class="overlay-panel" id="overlay-history">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('history')"><i class="bi bi-arrow-left"></i></div>
+      <h3>Riwayat Survei</h3>
+    </div>
+    <div class="overlay-body">
+      <div class="section-title" style="margin-top:0;">Survei yang Saya Upload</div>
+      <div id="history-uploaded-list"></div>
+      <div class="section-title">Survei yang Saya Isi</div>
+      <div id="history-filled-list"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY: EDIT PROFILE -->
+  <div class="overlay-panel" id="overlay-edit-profile">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('edit-profile')"><i class="bi bi-arrow-left"></i></div>
+      <h3>Edit Profil</h3>
+    </div>
+    <div class="overlay-body">
+      <div class="form-card">
+        <label class="field-label">Nama Lengkap</label>
+        <input type="text" id="edit-name" class="input-academic">
+        <label class="field-label">Universitas</label>
+        <input type="text" id="edit-univ" class="input-academic">
+        <label class="field-label">Program Studi</label>
+        <input type="text" id="edit-major" class="input-academic">
+        <button class="btn-gold" onclick="handleSaveProfile()">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY: FORUM -->
+  <div class="overlay-panel" id="overlay-forum">
+    <div class="overlay-head">
+      <div class="overlay-back" onclick="closeOverlay('forum')"><i class="bi bi-arrow-left"></i></div>
+      <h3>Forum Diskusi</h3>
+    </div>
+    <div class="overlay-body">
+      <div class="form-card" style="margin-bottom:16px;">
+        <label class="field-label">Mulai Diskusi Baru</label>
+        <input type="text" id="forum-title" class="input-academic" placeholder="Judul diskusi">
+        <textarea id="forum-body" class="input-academic" placeholder="Tulis pertanyaan atau bantuan yang dibutuhkan..."></textarea>
+        <button class="btn-gold" onclick="handlePostForum()">Posting</button>
+      </div>
+      <div id="forum-list"></div>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================= -->
+<script>
+/* =========================================================
+   1. STORAGE HELPERS (localStorage backend)
+========================================================= */
+const DB_KEYS = {
+  USERS:'sm_users', SESSION:'sm_session', SURVEYS:'sm_surveys',
+  RESPONSES:'sm_responses', POINTS:'sm_points_history', NOTIFS:'sm_notifications',
+  FORUM:'sm_forum', DARK:'sm_dark_mode', SCHEMA:'sm_schema_version'
+};
+// Bump this whenever the stored data shape changes (e.g. switching surveys
+// from external link-based to in-app questionnaire-based). On mismatch,
+// old incompatible data is cleared automatically so the app never gets
+// stuck with "empty" surveys created under an older version.
+const CURRENT_SCHEMA_VERSION = 2;
+function runSchemaMigration(){
+  const stored = localStorage.getItem(DB_KEYS.SCHEMA);
+  if(stored !== String(CURRENT_SCHEMA_VERSION)){
+    Object.values(DB_KEYS).forEach(k=>{ if(k!==DB_KEYS.SCHEMA) localStorage.removeItem(k); });
+    localStorage.setItem(DB_KEYS.SCHEMA, String(CURRENT_SCHEMA_VERSION));
+  }
+}
+function dbGet(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ return fallback; }
+}
+function dbSet(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+function uid(prefix='id'){ return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function nowISO(){ return new Date().toISOString(); }
+function timeAgo(iso){
+  const diff = (Date.now() - new Date(iso).getTime())/1000;
+  if(diff<60) return 'Baru saja';
+  if(diff<3600) return Math.floor(diff/60)+' menit lalu';
+  if(diff<86400) return Math.floor(diff/3600)+' jam lalu';
+  return Math.floor(diff/86400)+' hari lalu';
+}
+function initials(name){
+  if(!name) return '?';
+  const p = name.trim().split(' ');
+  return (p[0][0] + (p[1]?p[1][0]:'')).toUpperCase();
+}
+
+/* Simple password hashing via SubtleCrypto (SHA-256) — native browser API, no external service */
+async function hashPassword(pw){
+  const enc = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+/* =========================================================
+   2. SEED DEMO DATA (first run only)
+========================================================= */
+async function seedDemoData(){
+  if(dbGet(DB_KEYS.USERS,null)) return; // already seeded
+
+  const demoPwHash = await hashPassword('budi12345');
+  const users = [
+    {id:'u_demo1', name:'Budi Santoso', email:'budi@kampus.ac.id', passwordHash:demoPwHash, university:'Universitas Diponegoro', major:'Manajemen', points:12, createdAt:nowISO(), filledCount:8, collectedCount:42},
+    {id:'u_demo2', name:'Sari Wulandari', email:'sari@kampus.ac.id', passwordHash:demoPwHash, university:'Universitas Diponegoro', major:'Psikologi', points:27, createdAt:nowISO(), filledCount:30, collectedCount:120},
+    {id:'u_demo3', name:'Andi Pratama', email:'andi@kampus.ac.id', passwordHash:demoPwHash, university:'Universitas Indonesia', major:'Teknik Industri', points:55, createdAt:nowISO(), filledCount:60, collectedCount:210},
+  ];
+  dbSet(DB_KEYS.USERS, users);
+
+  const surveys = [
+    {id:'s_demo1', ownerId:'u_demo2', title:'Pengaruh Konten TikTok terhadap Perilaku Konsumtif Mahasiswa', description:'Penelitian ini meneliti hubungan antara intensitas penggunaan TikTok dengan kecenderungan belanja impulsif pada mahasiswa.', category:'Psikologi', targetCriteria:'Mahasiswa aktif pengguna TikTok, usia 18-24 tahun', targetCount:40, currentCount:22, status:'active', createdAt:nowISO(),
+      questionnaire:{
+        title:'Kuesioner Perilaku Konsumtif Pengguna TikTok', scaleMax:4,
+        scaleLabels:{4:'Sangat Setuju',3:'Setuju',2:'Tidak Setuju',1:'Sangat Tidak Setuju'},
+        instruction:'Berikan penilaian terhadap pernyataan berikut sesuai pengalamanmu menggunakan TikTok.',
+        questions:[
+          {number:1,text:'Saya sering membeli produk setelah melihatnya di TikTok.'},
+          {number:2,text:'Konten promosi di TikTok memengaruhi keputusan belanja saya.'},
+          {number:3,text:'Saya merasa perlu membeli barang yang sedang tren di TikTok.'},
+          {number:4,text:'Saya menghabiskan lebih banyak uang setelah aktif menggunakan TikTok.'},
+          {number:5,text:'Saya membandingkan harga produk sebelum membeli walau melihatnya di TikTok.'}
+        ]
+      }
+    },
+    {id:'s_demo2', ownerId:'u_demo3', title:'Analisis Efisiensi Rantai Pasok UMKM Pasca Pandemi', description:'Mengkaji dampak digitalisasi rantai pasok terhadap efisiensi operasional UMKM di Indonesia.', category:'Ekonomi & Bisnis', targetCriteria:'Mahasiswa atau pelaku UMKM', targetCount:50, currentCount:12, status:'active', createdAt:nowISO(),
+      questionnaire:{
+        title:'Kuesioner Digitalisasi Rantai Pasok UMKM', scaleMax:4,
+        scaleLabels:{4:'Sangat Penting',3:'Penting',2:'Tidak Penting',1:'Sangat Tidak Penting'},
+        instruction:'Berikan penilaian terhadap tingkat kepentingan setiap aspek digitalisasi rantai pasok berikut.',
+        questions:[
+          {number:1,text:'Seberapa penting penggunaan sistem digital dalam pencatatan stok barang?'},
+          {number:2,text:'Seberapa penting kecepatan pengiriman barang dari pemasok ke UMKM?'},
+          {number:3,text:'Seberapa penting transparansi harga dari pemasok ke pelaku UMKM?'},
+          {number:4,text:'Seberapa penting integrasi pembayaran digital dalam rantai pasok?'},
+          {number:5,text:'Seberapa penting pelatihan digitalisasi bagi pelaku UMKM?'}
+        ]
+      }
+    },
+    {id:'s_demo3', ownerId:'u_demo2', title:'Efektivitas Pembelajaran Daring terhadap Motivasi Belajar', description:'Mengukur sejauh mana metode pembelajaran daring memengaruhi tingkat motivasi belajar mahasiswa S1.', category:'Pendidikan', targetCriteria:'Mahasiswa aktif semester 3-8', targetCount:30, currentCount:30, status:'completed', createdAt:nowISO(),
+      questionnaire:{
+        title:'Kuesioner Motivasi Belajar Daring', scaleMax:4,
+        scaleLabels:{4:'Sangat Setuju',3:'Setuju',2:'Tidak Setuju',1:'Sangat Tidak Setuju'},
+        instruction:'Berikan penilaian terhadap pernyataan mengenai pembelajaran daring berikut.',
+        questions:[
+          {number:1,text:'Saya tetap termotivasi belajar meski kelas dilakukan secara daring.'},
+          {number:2,text:'Pembelajaran daring memudahkan saya mengatur waktu belajar.'},
+          {number:3,text:'Saya lebih mudah fokus saat belajar secara tatap muka dibanding daring.'},
+          {number:4,text:'Interaksi dengan dosen tetap efektif meski dilakukan secara daring.'}
+        ]
+      }
+    },
+    {id:'s_demo4', ownerId:'u_demo1', title:'Persepsi Mahasiswa terhadap Kesehatan Mental di Lingkungan Kampus', description:'Penelitian deskriptif mengenai kesadaran dan persepsi mahasiswa terhadap isu kesehatan mental.', category:'Kesehatan', targetCriteria:'Mahasiswa aktif segala jurusan', targetCount:35, currentCount:9, status:'active', createdAt:nowISO(),
+      questionnaire:{
+        title:'Kuesioner Persepsi Kesehatan Mental Mahasiswa', scaleMax:4,
+        scaleLabels:{4:'Sangat Setuju',3:'Setuju',2:'Tidak Setuju',1:'Sangat Tidak Setuju'},
+        instruction:'Berikan penilaian terhadap pernyataan mengenai kesehatan mental di lingkungan kampus berikut.',
+        questions:[
+          {number:1,text:'Kampus saya menyediakan layanan konseling yang mudah diakses.'},
+          {number:2,text:'Saya merasa nyaman membicarakan masalah kesehatan mental dengan teman.'},
+          {number:3,text:'Tekanan akademik memengaruhi kondisi kesehatan mental saya.'},
+          {number:4,text:'Saya mengetahui tanda-tanda umum gangguan kesehatan mental.'},
+          {number:5,text:'Lingkungan kampus mendukung kesejahteraan mental mahasiswa.'}
+        ]
+      }
+    },
+  ];
+  dbSet(DB_KEYS.SURVEYS, surveys);
+  dbSet(DB_KEYS.RESPONSES, []);
+  dbSet(DB_KEYS.POINTS, []);
+  dbSet(DB_KEYS.NOTIFS, []);
+  dbSet(DB_KEYS.FORUM, [
+    {id:'f_demo1', userId:'u_demo3', title:'Tips supaya kuesioner cepat terisi?', body:'Halo teman-teman, ada tips supaya survei skripsi cepat dapat responden? Target saya 50 orang dalam 1 minggu 🙏', createdAt:nowISO()}
+  ]);
+}
+
+/* =========================================================
+   3. AUTH STATE & VALIDATION
+========================================================= */
+let currentUser = null;
+
+function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+
+function getUsers(){ return dbGet(DB_KEYS.USERS, []); }
+function saveUsers(u){ dbSet(DB_KEYS.USERS, u); }
+function findUserByEmail(email){ return getUsers().find(u=>u.email.toLowerCase()===email.toLowerCase()); }
+function findUserById(id){ return getUsers().find(u=>u.id===id); }
+function updateUser(updated){
+  const users = getUsers().map(u=> u.id===updated.id ? updated : u);
+  saveUsers(users);
+  if(currentUser && currentUser.id===updated.id) currentUser = updated;
+}
+
+async function handleRegister(){
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw = document.getElementById('reg-password').value;
+  const univ = document.getElementById('reg-univ').value.trim();
+  const major = document.getElementById('reg-major').value.trim();
+
+  let valid = true;
+  toggleErr('err-reg-name', !name); if(!name) valid=false;
+  const emailTaken = findUserByEmail(email);
+  if(!isValidEmail(email) || emailTaken){ toggleErr('err-reg-email', true, emailTaken?'Email sudah terdaftar.':'Format email tidak valid.'); valid=false; }
+  else toggleErr('err-reg-email', false);
+  if(!pw || pw.length<8){ toggleErr('err-reg-password', true); valid=false; } else toggleErr('err-reg-password', false);
+
+  if(!valid) return;
+
+  const passwordHash = await hashPassword(pw);
+  const newUser = {
+    id: uid('u'), name, email, passwordHash,
+    university: univ || '-', major: major || '-',
+    points: 10, // starting bonus points so users can begin the barter loop
+    createdAt: nowISO(), filledCount:0, collectedCount:0
+  };
+  const users = getUsers(); users.push(newUser); saveUsers(users);
+
+  addPointHistory(newUser.id, 'in', 10, 'Bonus poin pendaftaran akun baru');
+  showToast('Akun berhasil dibuat! Kamu mendapat 10 poin bonus 🎉','success');
+  loginAs(newUser, true);
+}
+
+async function handleLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-password').value;
+  const remember = document.getElementById('login-remember').checked;
+
+  let valid = true;
+  if(!isValidEmail(email)){ toggleErr('err-login-email', true); valid=false; } else toggleErr('err-login-email', false);
+
+  const user = findUserByEmail(email);
+  if(!valid) return;
+
+  const pwHash = await hashPassword(pw);
+  if(!user || user.passwordHash !== pwHash){
+    toggleErr('err-login-password', true, 'Email atau password salah.');
+    return;
+  }
+  toggleErr('err-login-password', false);
+  loginAs(user, remember);
+}
+
+function loginAs(user, remember){
+  currentUser = user;
+  dbSet(DB_KEYS.SESSION, {userId:user.id, remember:!!remember, ts:Date.now()});
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  renderAll();
+}
+
+function handleLogout(){
+  const sess = dbGet(DB_KEYS.SESSION, null);
+  localStorage.removeItem(DB_KEYS.SESSION);
+  currentUser = null;
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  toggleAuth('login');
+  showToast('Berhasil keluar dari akun.','info');
+}
+
+function checkSession(){
+  const sess = dbGet(DB_KEYS.SESSION, null);
+  if(sess && sess.userId){
+    const user = findUserById(sess.userId);
+    if(user){ currentUser = user; return true; }
+  }
+  return false;
+}
+
+function toggleAuth(which){
+  document.getElementById('login-card').style.display = which==='login' ? 'block':'none';
+  document.getElementById('register-card').style.display = which==='register' ? 'block':'none';
+}
+
+function toggleErr(id, show, msg){
+  const el = document.getElementById(id);
+  if(!el) return;
+  if(msg) el.textContent = msg;
+  el.style.display = show ? 'block':'none';
+}
+
+/* =========================================================
+   4. POINTS & NOTIFICATIONS
+========================================================= */
+function addPointHistory(userId, type, amount, reason){
+  const list = dbGet(DB_KEYS.POINTS, []);
+  list.unshift({id:uid('pt'), userId, type, amount, reason, date:nowISO()});
+  dbSet(DB_KEYS.POINTS, list);
+}
+function getPointHistory(userId){ return dbGet(DB_KEYS.POINTS, []).filter(p=>p.userId===userId); }
+
+function addNotification(userId, type, message){
+  const list = dbGet(DB_KEYS.NOTIFS, []);
+  list.unshift({id:uid('nt'), userId, type, message, read:false, date:nowISO()});
+  dbSet(DB_KEYS.NOTIFS, list);
+}
+function getNotifications(userId){ return dbGet(DB_KEYS.NOTIFS, []).filter(n=>n.userId===userId); }
+
+/* =========================================================
+   5. SURVEYS
+========================================================= */
+function getSurveys(){ return dbGet(DB_KEYS.SURVEYS, []); }
+function saveSurveys(s){ dbSet(DB_KEYS.SURVEYS, s); }
+function getResponses(){ return dbGet(DB_KEYS.RESPONSES, []); }
+function saveResponses(r){ dbSet(DB_KEYS.RESPONSES, r); }
+
+/* ---------------------------------------------------------
+   Questionnaire text parser
+   Converts a pasted plain-text questionnaire (title, skala,
+   bobot legend, petunjuk pengisian, numbered questions) into
+   a structured object so it can be rendered as an in-app
+   Google-Forms-like form — no external link needed.
+--------------------------------------------------------- */
+function parseQuestionnaireText(raw){
+  if(!raw || !raw.trim()) return null;
+  const lines = raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  if(lines.length===0) return null;
+
+  // Title = first non-empty line that isn't itself a "skala:"/"bobot:" line
+  let title = lines[0];
+
+  // skala: N
+  let scaleMax = 4;
+  const skalaLine = lines.find(l=>/^skala\s*:/i.test(l));
+  if(skalaLine){
+    const m = skalaLine.match(/(\d+)/);
+    if(m) scaleMax = parseInt(m[1]);
+  }
+
+  // Collect every "N = Label" pair found within legend-like lines only
+  // (lines containing at least one "digit = " pattern, excluding numbered
+  // question lines). Matching is scoped per-line so a label can never run
+  // on and swallow unrelated text below it. Later occurrences overwrite
+  // earlier ones, so a fuller legend (e.g. repeated inside the
+  // instructions) wins over a truncated one.
+  const scaleLabels = {};
+  const legendLines = lines.filter(l => /\d\s*=\s*\S/.test(l) && !/^\d{1,3}\.\s*/.test(l));
+  const legendPairRegex = /(\d)\s*=\s*([^\d=]+?)(?=(?:\d\s*=)|$)/g;
+  legendLines.forEach(line=>{
+    let match;
+    legendPairRegex.lastIndex = 0;
+    while((match = legendPairRegex.exec(line)) !== null){
+      const num = parseInt(match[1]);
+      const label = match[2].replace(/petunjuk pengisian\s*:?/i,'').trim().replace(/[.,]$/,'');
+      if(num>=1 && num<=9 && label) scaleLabels[num] = label;
+    }
+  });
+  // Fallback default labels if nothing parsed
+  if(Object.keys(scaleLabels).length===0){
+    for(let i=scaleMax;i>=1;i--) scaleLabels[i] = 'Skala ' + i;
+  }
+
+  // Numbered questions: lines starting with "1." "2." etc.
+  const questions = [];
+  lines.forEach(l=>{
+    const qm = l.match(/^(\d{1,3})\.\s*(.+)$/);
+    if(qm){
+      questions.push({number: parseInt(qm[1]), text: qm[2].trim()});
+    }
+  });
+
+  // Instruction text = lines after "Petunjuk Pengisian" up to first question,
+  // excluding legend-repeat lines (lines containing 2+ "N=" pairs) and label lines.
+  let instruction = '';
+  const petunjukIdx = lines.findIndex(l=>/petunjuk pengisian/i.test(l));
+  if(petunjukIdx !== -1){
+    const firstQIdx = lines.findIndex(l=>/^\d{1,3}\.\s*/.test(l));
+    const endIdx = firstQIdx !== -1 ? firstQIdx : lines.length;
+    const block = lines.slice(petunjukIdx+1, endIdx).filter(l=>{
+      const legendLikeCount = (l.match(/\d\s*=/g)||[]).length;
+      if(legendLikeCount >= 2) return false; // skip legend-repeat lines
+      if(/^skala\s*:/i.test(l) || /^bobot\s*:/i.test(l)) return false;
+      return true;
+    });
+    instruction = block.join(' ');
+  }
+
+  if(questions.length===0) return null; // not a valid questionnaire without questions
+
+  questions.sort((a,b)=>a.number-b.number);
+
+  return { title, scaleMax, scaleLabels, instruction, questions };
+}
+
+function scaleLegendChipsHTML(q){
+  let html = '<div class="scale-legend-row">';
+  for(let i=q.scaleMax;i>=1;i--){
+    html += `<span class="scale-legend-chip"><b>${i}</b> = ${q.scaleLabels[i] || 'Skala '+i}</span>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function handlePreviewQuestionnaire(){
+  const raw = document.getElementById('up-questionnaire-raw').value;
+  const parsed = parseQuestionnaireText(raw);
+  const previewBox = document.getElementById('up-questionnaire-preview');
+
+  if(!parsed){
+    toggleErr('err-up-parse', true);
+    previewBox.style.display='none';
+    return;
+  }
+  toggleErr('err-up-parse', false);
+
+  previewBox.style.display = 'block';
+  previewBox.innerHTML = `
+    <div class="questionnaire-meta">
+      <b>${parsed.title}</b><br>
+      ${parsed.instruction ? parsed.instruction + '<br>' : ''}
+      ${scaleLegendChipsHTML(parsed)}
+    </div>
+    ${parsed.questions.map(q=>`
+      <div class="q-card">
+        <div class="q-num">Pertanyaan ${q.number}</div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-options">
+          ${Array.from({length:parsed.scaleMax}, (_,i)=>parsed.scaleMax-i).map(v=>`
+            <div class="q-option"><div class="radio-dot"></div><span class="opt-score">${v}</span> ${parsed.scaleLabels[v]||''}</div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+  `;
+  showToast(`Berhasil mendeteksi ${parsed.questions.length} pertanyaan.`,'success');
+}
+
+function handleUploadSurvey(){
+  const title = document.getElementById('up-title').value.trim();
+  const desc = document.getElementById('up-desc').value.trim();
+  const category = document.getElementById('up-category').value;
+  const target = document.getElementById('up-target').value.trim();
+  const count = parseInt(document.getElementById('up-count').value);
+  const rawQuestionnaire = document.getElementById('up-questionnaire-raw').value;
+
+  const parsedQuestionnaire = parseQuestionnaireText(rawQuestionnaire);
+
+  if(!title || !desc || !target || !count || count<1 || !parsedQuestionnaire){
+    toggleErr('err-up', true);
+    if(!parsedQuestionnaire) toggleErr('err-up-parse', true);
+    return;
+  }
+  toggleErr('err-up', false);
+  toggleErr('err-up-parse', false);
+
+  const cost = count; // 1 point per respondent requested — barter cost
+  if(currentUser.points < cost){
+    showToast(`Poin tidak cukup. Butuh ${cost} poin, kamu punya ${currentUser.points}.`,'error');
+    return;
+  }
+
+  const surveys = getSurveys();
+  surveys.unshift({
+    id: uid('s'), ownerId: currentUser.id, title, description:desc, category,
+    targetCriteria: target, targetCount: count, currentCount:0,
+    questionnaire: parsedQuestionnaire, status:'active', createdAt: nowISO()
+  });
+  saveSurveys(surveys);
+
+  currentUser.points -= cost;
+  updateUser(currentUser);
+  addPointHistory(currentUser.id, 'out', cost, `Publikasi survei: ${title}`);
+
+  showToast('Survei berhasil dipublikasikan! 🎓','success');
+  ['up-title','up-desc','up-target','up-count','up-questionnaire-raw'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('up-questionnaire-preview').style.display='none';
+  document.getElementById('up-questionnaire-preview').innerHTML='';
+  renderAll();
+  goView('dashboard');
+}
+
+function ownerName(ownerId){
+  const u = findUserById(ownerId);
+  return u ? u.name : 'Mahasiswa';
+}
+
+function surveyCardHTML(s){
+  const pct = Math.min(100, Math.round((s.currentCount/s.targetCount)*100));
+  const owner = findUserById(s.ownerId);
+  return `
+  <div class="survey-card" onclick="openSurveyDetail('${s.id}')">
+    <div class="top-row">
+      <span class="cat-chip">${s.category}</span>
+      ${s.status==='completed' ? '<span class="cat-chip" style="background:var(--green-soft);color:#0F766E;">Selesai</span>':''}
+    </div>
+    <h4>${s.title}</h4>
+    <div class="desc">${s.description}</div>
+    <div class="survey-meta">
+      <span><i class="bi bi-people"></i> ${s.targetCriteria}</span>
+    </div>
+    <div class="progress-academic"><div class="bar" style="width:${pct}%;"></div></div>
+    <div class="progress-label"><span>${s.currentCount}/${s.targetCount} responden</span><span>${pct}%</span></div>
+    <div class="owner-tag"><div class="avatar-mini">${initials(owner?owner.name:'?')}</div> Diupload oleh ${owner?owner.name:'Mahasiswa'} · ${timeAgo(s.createdAt)}</div>
+  </div>`;
+}
+
+/* Smart matching: score surveys against current user's major/university keywords */
+function smartMatchScore(s){
+  if(!currentUser) return 0;
+  let score = 0;
+  const major = (currentUser.major||'').toLowerCase();
+  const txt = (s.title+' '+s.description+' '+s.category+' '+s.targetCriteria).toLowerCase();
+  if(major && major!=='-' && txt.includes(major.split(' ')[0])) score += 3;
+  if(s.category && currentUser.history_categories && currentUser.history_categories.includes(s.category)) score += 2;
+  score += Math.max(0, 5 - Math.floor((s.targetCount-s.currentCount)/10)); // prioritize surveys close to completion slightly less urgent, near-empty slightly more chance
+  return score;
+}
+
+function getActiveOtherSurveys(){
+  return getSurveys().filter(s=> s.status==='active' && s.ownerId!==currentUser.id);
+}
+
+/* =========================================================
+   6. RENDER: DASHBOARD
+========================================================= */
+function renderDashboard(){
+  document.getElementById('dash-username').textContent = currentUser.name;
+  document.getElementById('stat-points').textContent = currentUser.points;
+  const mySurveys = getSurveys().filter(s=>s.ownerId===currentUser.id && s.status==='active');
+  document.getElementById('stat-active-surveys').textContent = mySurveys.length;
+  const totalResp = mySurveys.reduce((a,s)=>a+s.currentCount,0);
+  document.getElementById('stat-respondents').textContent = totalResp;
+
+  const others = getActiveOtherSurveys();
+  const recommended = [...others].sort((a,b)=>smartMatchScore(b)-smartMatchScore(a)).slice(0,3);
+  const latest = [...others].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,4);
+
+  document.getElementById('dash-recommend-list').innerHTML = recommended.length
+    ? recommended.map(surveyCardHTML).join('')
+    : `<div class="empty-state"><i class="bi bi-emoji-smile"></i><p>Belum ada rekomendasi. Lengkapi profil program studimu!</p></div>`;
+
+  document.getElementById('dash-latest-list').innerHTML = latest.length
+    ? latest.map(surveyCardHTML).join('')
+    : `<div class="empty-state"><i class="bi bi-inbox"></i><p>Belum ada survei aktif lainnya.</p></div>`;
+
+  renderLeaderboardMini();
+}
+
+function renderLeaderboardMini(){
+  const users = [...getUsers()].sort((a,b)=>liveCollectedCount(b.id) - liveCollectedCount(a.id)).slice(0,3);
+  document.getElementById('dash-leaderboard-mini').innerHTML = users.map((u,i)=>`
+    <div class="lb-row top${i+1}">
+      <div class="lb-rank">#${i+1}</div>
+      <div class="avatar-mini" style="width:30px;height:30px;font-size:11px;">${initials(u.name)}</div>
+      <div class="lb-name"><b>${u.name}</b><span>${u.university}</span></div>
+      <div class="lb-pts">${liveFilledCount(u.id)} bantu</div>
+    </div>
+  `).join('');
+}
+
+/* Helper to compute "live" filled-count from responses (verified) so demo stays consistent */
+function liveFilledCount(userId){
+  return getResponses().filter(r=>r.userId===userId && r.status==='verified').length + (findUserById(userId)?.filledCount||0);
+}
+function liveCollectedCount(userId){
+  return getSurveys().filter(s=>s.ownerId===userId).reduce((a,s)=>a+s.currentCount,0) + (findUserById(userId)?.collectedCount||0);
+}
+// Kept for backward compatibility; no longer relied upon for rendering
+// (see liveFilledCount / liveCollectedCount above, called directly instead).
+function patchUserHelpers(){
+  getUsers().forEach(u=>{
+    u.filledCountLive = ()=>liveFilledCount(u.id);
+    u.collectedCountLive = ()=>liveCollectedCount(u.id);
+  });
+}
+
+/* =========================================================
+   7. RENDER: SEARCH
+========================================================= */
+const CATEGORIES = ['Semua','Ekonomi & Bisnis','Psikologi','Pendidikan','Teknik & Sains','Kesehatan','Sosial & Politik','Komunikasi','Lainnya'];
+let activeCategory = 'Semua';
+let activeUrgency = 'Semua';
+
+function renderFilterChips(){
+  document.getElementById('cat-filter-row').innerHTML = CATEGORIES.map(c=>`
+    <div class="f-chip ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</div>
+  `).join('');
+  const urgencyOpts = ['Semua','Hampir Selesai','Baru Dibuka'];
+  document.getElementById('target-filter-row').innerHTML = urgencyOpts.map(c=>`
+    <div class="f-chip ${c===activeUrgency?'active':''}" onclick="setUrgency('${c}')">${c}</div>
+  `).join('');
+}
+function setCategory(c){ activeCategory=c; renderFilterChips(); renderSearchResults(); }
+function setUrgency(c){ activeUrgency=c; renderFilterChips(); renderSearchResults(); }
+
+function renderSearchResults(){
+  const q = (document.getElementById('search-input').value||'').toLowerCase();
+  let list = getActiveOtherSurveys();
+  if(activeCategory!=='Semua') list = list.filter(s=>s.category===activeCategory);
+  if(q) list = list.filter(s=> s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+  if(activeUrgency==='Hampir Selesai') list = list.filter(s=> (s.currentCount/s.targetCount) >= 0.7);
+  if(activeUrgency==='Baru Dibuka') list = list.filter(s=> (s.currentCount/s.targetCount) < 0.2);
+
+  document.getElementById('search-results-list').innerHTML = list.length
+    ? list.map(surveyCardHTML).join('')
+    : `<div class="empty-state"><i class="bi bi-search"></i><p>Tidak ada survei yang cocok. Coba kata kunci lain.</p></div>`;
+}
+
+/* =========================================================
+   8. SURVEY DETAIL + FILL / VERIFY FLOW
+========================================================= */
+let activeSurveyId = null;
+
+function openSurveyDetail(surveyId){
+  activeSurveyId = surveyId;
+  const s = getSurveys().find(x=>x.id===surveyId);
+  if(!s) return;
+  const isOwner = s.ownerId === currentUser.id;
+  const myResponse = getResponses().find(r=>r.surveyId===s.id && r.userId===currentUser.id);
+  const pct = Math.min(100, Math.round((s.currentCount/s.targetCount)*100));
+  const qCount = s.questionnaire ? s.questionnaire.questions.length : 0;
+
+  let actionHTML = '';
+  if(isOwner){
+    const pending = getResponses().filter(r=>r.surveyId===s.id && r.status==='pending');
+    actionHTML = `
+      <div class="section-title" style="margin-top:22px;">Responden Menunggu Verifikasi (${pending.length})</div>
+      ${pending.length ? pending.map(r=>{
+        const u = findUserById(r.userId);
+        return `<div class="menu-row" style="cursor:default;">
+          <div class="avatar-mini" style="width:34px;height:34px;font-size:12px;">${initials(u?u.name:'?')}</div>
+          <div class="txt">${u?u.name:'Mahasiswa'}<div class="sub">Mengisi ${timeAgo(r.submittedAt)} · pola jawaban perlu ditinjau</div></div>
+          <button class="btn-gold" style="width:auto;padding:8px 14px;font-size:12px;" onclick="verifyResponse('${r.id}')">Verifikasi</button>
+        </div>`;
+      }).join('') : '<div class="empty-state" style="padding:24px;"><p>Belum ada yang mengisi survei ini.</p></div>'}
+    `;
+  } else if(myResponse){
+    const statusTxt = myResponse.status==='verified' ? 'Sudah diverifikasi ✓ Poin telah ditambahkan' : 'Jawabanmu sedang ditinjau pemilik survei (pola jawaban terdeteksi seragam)';
+    actionHTML = `<div style="background:var(--green-soft);color:#0F766E;padding:13px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-top:20px;">
+      <i class="bi bi-check-circle-fill"></i> ${statusTxt}
+    </div>`;
+  } else if(s.status!=='active'){
+    actionHTML = `<div style="background:var(--gray-100);padding:13px;border-radius:var(--radius-sm);font-size:13px;margin-top:20px;color:var(--text-sub);">Survei ini sudah ditutup.</div>`;
+  } else {
+    actionHTML = `<button class="btn-gold" style="margin-top:20px;" onclick="openFillSurvey('${s.id}')"><i class="bi bi-pencil-square"></i> Isi Survei Sekarang</button>`;
+  }
+
+  document.getElementById('survey-detail-body').innerHTML = `
+    <span class="cat-chip">${s.category}</span>
+    <h2 style="font-size:19px;font-weight:700;margin:12px 0 8px;font-family:'Poppins',sans-serif;">${s.title}</h2>
+    <div class="owner-tag" style="margin-bottom:14px;">
+      <div class="avatar-mini">${initials(ownerName(s.ownerId))}</div> ${ownerName(s.ownerId)} · ${timeAgo(s.createdAt)}
+    </div>
+    <p style="font-size:13.5px;color:var(--text-sub);line-height:1.6;">${s.description}</p>
+
+    <div class="form-card" style="margin-top:14px;">
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-sub);margin-bottom:8px;">
+        <span><i class="bi bi-people-fill"></i> Target Responden</span><b style="color:var(--text-main);">${s.targetCriteria}</b>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-sub);margin-bottom:8px;">
+        <span><i class="bi bi-list-ol"></i> Jumlah Pertanyaan</span><b style="color:var(--text-main);">${qCount} pertanyaan (isi langsung di aplikasi)</b>
+      </div>
+      <div class="progress-academic"><div class="bar" style="width:${pct}%;"></div></div>
+      <div class="progress-label"><span>${s.currentCount}/${s.targetCount} responden terkumpul</span><span>${pct}%</span></div>
+    </div>
+
+    ${actionHTML}
+  `;
+  openOverlay('survey');
+}
+
+/* ---------------------------------------------------------
+   In-app questionnaire filling (no external link / Google Form)
+--------------------------------------------------------- */
+let fillAnswers = {};
+
+function openFillSurvey(surveyId){
+  const s = getSurveys().find(x=>x.id===surveyId);
+  if(!s) return;
+  if(!s.questionnaire || !s.questionnaire.questions || s.questionnaire.questions.length===0){
+    showToast('Survei ini belum memiliki data kuesioner yang valid. Coba muat ulang halaman atau hubungi pemilik survei.','error');
+    return;
+  }
+  fillAnswers = {};
+  const q = s.questionnaire;
+
+  document.getElementById('fill-overlay-title').textContent = q.title;
+  document.getElementById('fill-form-body').innerHTML = `
+    <div class="questionnaire-meta">
+      ${q.instruction ? q.instruction + '<br>' : ''}
+      ${scaleLegendChipsHTML(q)}
+    </div>
+    <div id="fill-questions-container">
+      ${q.questions.map(qq=>`
+        <div class="q-card">
+          <div class="q-num">Pertanyaan ${qq.number}</div>
+          <div class="q-text">${qq.text}</div>
+          <div class="q-options" id="fill-opts-${qq.number}">
+            ${Array.from({length:q.scaleMax}, (_,i)=>q.scaleMax-i).map(v=>`
+              <div class="q-option" onclick="selectAnswer(${qq.number}, ${v})" id="fill-opt-${qq.number}-${v}">
+                <div class="radio-dot"></div><span class="opt-score">${v}</span> ${q.scaleLabels[v]||''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button class="btn-gold" style="margin-top:6px;" onclick="submitFillSurvey('${s.id}')"><i class="bi bi-send-check"></i> Kirim Jawaban</button>
+  `;
+  closeOverlay('survey');
+  openOverlay('fill');
+}
+
+function selectAnswer(questionNumber, value){
+  fillAnswers[questionNumber] = value;
+  const container = document.getElementById('fill-opts-'+questionNumber);
+  if(!container) return;
+  container.querySelectorAll('.q-option').forEach(el=>el.classList.remove('selected'));
+  const chosen = document.getElementById(`fill-opt-${questionNumber}-${value}`);
+  if(chosen) chosen.classList.add('selected');
+}
+
+function submitFillSurvey(surveyId){
+  const s = getSurveys().find(x=>x.id===surveyId);
+  if(!s || !s.questionnaire) return;
+  const q = s.questionnaire;
+
+  const unanswered = q.questions.filter(qq=>!(qq.number in fillAnswers));
+  if(unanswered.length>0){
+    showToast(`Masih ada ${unanswered.length} pertanyaan yang belum dijawab.`,'error');
+    return;
+  }
+
+  // Anti careless-response check: if every answer is identical (straight-lining),
+  // flag the response for manual verification by the survey owner instead of
+  // awarding points instantly.
+  const values = Object.values(fillAnswers);
+  const isStraightLined = values.every(v=>v===values[0]) && values.length>1;
+
+  const responses = getResponses();
+  const responseId = uid('r');
+  responses.unshift({
+    id:responseId, surveyId:s.id, userId:currentUser.id,
+    status: isStraightLined ? 'pending' : 'verified',
+    answers: {...fillAnswers}, submittedAt:nowISO()
+  });
+  saveResponses(responses);
+
+  if(isStraightLined){
+    addNotification(s.ownerId, 'new_respondent', `${currentUser.name} mengisi survei "${s.title}". Pola jawaban seragam — mohon ditinjau sebelum diverifikasi.`);
+    showToast('Jawaban terkirim. Karena pola jawaban seragam, pemilik survei akan meninjau dulu sebelum poin ditambahkan.','info');
+  } else {
+    // Instantly award points — fulfils the "poin bertambah langsung" requirement
+    finalizeVerifiedResponse(responseId);
+    showToast('Jawaban terkirim & terverifikasi otomatis! Poin langsung bertambah 🎉','success');
+  }
+
+  closeOverlay('fill');
+  fillAnswers = {};
+  renderAll();
+}
+
+/* Shared logic: award points + update survey progress + notify, used by
+   both instant auto-verification and manual owner verification. */
+function finalizeVerifiedResponse(responseId){
+  const responses = getResponses();
+  const r = responses.find(x=>x.id===responseId);
+  if(!r) return;
+  r.status = 'verified';
+  saveResponses(responses);
+
+  const respondent = findUserById(r.userId);
+  if(respondent){
+    respondent.points += 1;
+    respondent.filledCount = (respondent.filledCount||0) + 1;
+    updateUser(respondent);
+    addPointHistory(respondent.id, 'in', 1, 'Verifikasi pengisian survei');
+    if(respondent.id !== currentUser.id){
+      addNotification(respondent.id, 'verified', 'Pengisian survei kamu sudah diverifikasi! +1 poin 🎉');
+    }
+    checkBadges(respondent);
+  }
+
+  const surveys = getSurveys();
+  const s = surveys.find(x=>x.id===r.surveyId);
+  if(s){
+    s.currentCount += 1;
+    if(s.currentCount >= s.targetCount){
+      s.status = 'completed';
+      addNotification(s.ownerId, 'target_reached', `Target responden survei "${s.title}" telah terpenuhi! 🎊`);
+    } else if(s.currentCount / s.targetCount >= 0.8){
+      addNotification(s.ownerId, 'almost_there', `Survei "${s.title}" hampir mencapai target responden!`);
+    }
+    saveSurveys(surveys);
+  }
+}
+
+function verifyResponse(responseId){
+  finalizeVerifiedResponse(responseId);
+  showToast('Responden berhasil diverifikasi.','success');
+  const r = getResponses().find(x=>x.id===responseId);
+  if(r) openSurveyDetail(r.surveyId);
+  renderAll();
+}
+
+/* =========================================================
+   9. BADGES / ACHIEVEMENTS / GAMIFICATION
+========================================================= */
+const BADGE_DEFS = [
+  {id:'b25', label:'Peneliti Aktif 25x', icon:'bi-award', threshold:25},
+  {id:'b50', label:'Peneliti Aktif 50x', icon:'bi-award-fill', threshold:50},
+  {id:'b100', label:'Peneliti Aktif 100x', icon:'bi-trophy', threshold:100},
+];
+const ACHIEVEMENT_DEFS = [
+  {id:'a1', label:'Peneliti Pemula', desc:'Mengunggah survei pertama', icon:'🥉'},
+  {id:'a2', label:'Peneliti Aktif', desc:'Mengumpulkan 100 responden', icon:'🥈'},
+  {id:'a3', label:'Peneliti Profesional', desc:'Mengumpulkan 500 responden', icon:'🥇'},
+];
+
+function checkBadges(user){
+  const filled = liveFilledCount(user.id);
+  BADGE_DEFS.forEach(b=>{
+    if(filled === b.threshold){
+      addNotification(user.id, 'badge', `Selamat! Kamu meraih lencana "${b.label}" 🏅`);
+    }
+  });
+}
+
+function renderBadges(){
+  const filled = liveFilledCount(currentUser.id);
+  const collected = liveCollectedCount(currentUser.id);
+  const uploaded = getSurveys().some(s=>s.ownerId===currentUser.id);
+
+  let html = '';
+  BADGE_DEFS.forEach(b=>{
+    const unlocked = filled >= b.threshold;
+    html += `<span class="badge-pill ${unlocked?'unlocked':''}"><i class="bi ${b.icon}"></i> ${b.label}</span>`;
+  });
+  html += '<div style="margin-top:10px;">';
+  if(uploaded) html += `<span class="badge-pill unlocked">🥉 Peneliti Pemula</span>`;
+  if(collected>=100) html += `<span class="badge-pill unlocked">🥈 Peneliti Aktif</span>`;
+  if(collected>=500) html += `<span class="badge-pill unlocked">🥇 Peneliti Profesional</span>`;
+  html += '</div>';
+  document.getElementById('badge-list').innerHTML = html;
+}
+
+/* =========================================================
+   10. RENDER: POINTS
+========================================================= */
+function renderPoints(){
+  document.getElementById('points-total-big').textContent = currentUser.points;
+  const history = getPointHistory(currentUser.id);
+  const inList = history.filter(h=>h.type==='in');
+  const outList = history.filter(h=>h.type==='out');
+
+  document.getElementById('points-in-list').innerHTML = inList.length ? inList.map(pointRowHTML).join('') :
+    `<div class="empty-state" style="padding:24px;"><p>Belum ada poin masuk.</p></div>`;
+  document.getElementById('points-out-list').innerHTML = outList.length ? outList.map(pointRowHTML).join('') :
+    `<div class="empty-state" style="padding:24px;"><p>Belum ada poin keluar.</p></div>`;
+}
+function pointRowHTML(h){
+  return `<div class="point-row ${h.type}">
+    <div class="pi"><i class="bi ${h.type==='in'?'bi-arrow-down-left':'bi-arrow-up-right'}"></i></div>
+    <div class="pt"><b>${h.reason}</b><span>${timeAgo(h.date)}</span></div>
+    <div class="amt">${h.type==='in'?'+':'-'}${h.amount}</div>
+  </div>`;
+}
+
+/* =========================================================
+   11. RENDER: PROFILE
+========================================================= */
+function renderProfile(){
+  document.getElementById('profile-avatar-initial').textContent = initials(currentUser.name);
+  document.getElementById('profile-name').textContent = currentUser.name;
+  document.getElementById('profile-univ').textContent = `${currentUser.university} — ${currentUser.major}`;
+  renderBadges();
+}
+
+function handleSaveProfile(){
+  currentUser.name = document.getElementById('edit-name').value.trim() || currentUser.name;
+  currentUser.university = document.getElementById('edit-univ').value.trim() || currentUser.university;
+  currentUser.major = document.getElementById('edit-major').value.trim() || currentUser.major;
+  updateUser(currentUser);
+  showToast('Profil berhasil diperbarui.','success');
+  closeOverlay('edit-profile');
+  renderAll();
+}
+
+/* =========================================================
+   12. OVERLAYS: NOTIF / LEADERBOARD / HISTORY / FORUM
+========================================================= */
+function renderNotifications(){
+  const list = getNotifications(currentUser.id);
+  document.getElementById('notif-list').innerHTML = list.length ? list.map(n=>`
+    <div class="notif-item ${n.read?'':'unread'}">
+      <div class="notif-icon"><i class="bi bi-bell-fill"></i></div>
+      <div style="flex:1;">
+        <div class="nt">${n.message}</div>
+        <div class="ntime">${timeAgo(n.date)}</div>
+      </div>
+    </div>
+  `).join('') : `<div class="empty-state"><i class="bi bi-bell-slash"></i><p>Belum ada notifikasi.</p></div>`;
+
+  // mark all read
+  const all = dbGet(DB_KEYS.NOTIFS, []);
+  all.forEach(n=>{ if(n.userId===currentUser.id) n.read=true; });
+  dbSet(DB_KEYS.NOTIFS, all);
+  updateNotifDot();
+}
+function updateNotifDot(){
+  const unread = getNotifications(currentUser.id).filter(n=>!n.read).length;
+  document.getElementById('notif-dot').style.display = unread>0 ? 'block':'none';
+}
+
+let lbScope = 'campus';
+function setLbScope(scope){
+  lbScope = scope;
+  document.querySelectorAll('#lb-filter-row .f-chip').forEach(c=>c.classList.toggle('active', c.dataset.scope===scope));
+  renderLeaderboard();
+}
+function renderLeaderboard(){
+  patchUserHelpers();
+  let users = [...getUsers()];
+  if(lbScope==='campus') users = users.filter(u=>u.university===currentUser.university);
+  users.sort((a,b)=> liveFilledCount(b.id) - liveFilledCount(a.id));
+  document.getElementById('lb-list').innerHTML = users.length ? users.map((u,i)=>`
+    <div class="lb-row top${i+1}">
+      <div class="lb-rank">#${i+1}</div>
+      <div class="avatar-mini" style="width:32px;height:32px;">${initials(u.name)}</div>
+      <div class="lb-name"><b>${u.name}${u.id===currentUser.id?' (Kamu)':''}</b><span>${u.university} · ${u.major}</span></div>
+      <div class="lb-pts">${liveFilledCount(u.id)} bantu</div>
+    </div>
+  `).join('') : `<div class="empty-state"><p>Belum ada data.</p></div>`;
+}
+
+function renderHistory(){
+  const myUploaded = getSurveys().filter(s=>s.ownerId===currentUser.id);
+  document.getElementById('history-uploaded-list').innerHTML = myUploaded.length ? myUploaded.map(surveyCardHTML).join('') :
+    `<div class="empty-state" style="padding:24px;"><p>Kamu belum mengupload survei.</p></div>`;
+
+  const myResponses = getResponses().filter(r=>r.userId===currentUser.id);
+  const filledSurveys = myResponses.map(r=>({...getSurveys().find(s=>s.id===r.surveyId), _status:r.status})).filter(Boolean);
+  document.getElementById('history-filled-list').innerHTML = filledSurveys.length ? filledSurveys.map(s=>`
+    <div class="survey-card" onclick="openSurveyDetail('${s.id}')" style="cursor:pointer;">
+      <div class="top-row"><span class="cat-chip">${s.category}</span>
+        <span class="cat-chip" style="background:${s._status==='verified'?'var(--green-soft)':'var(--gray-100)'};color:${s._status==='verified'?'#0F766E':'var(--text-sub)'};">
+          ${s._status==='verified'?'Terverifikasi':'Menunggu'}
+        </span>
+      </div>
+      <h4>${s.title}</h4>
+    </div>
+  `).join('') : `<div class="empty-state" style="padding:24px;"><p>Kamu belum mengisi survei siapapun.</p></div>`;
+}
+
+function renderForum(){
+  const posts = dbGet(DB_KEYS.FORUM, []);
+  document.getElementById('forum-list').innerHTML = posts.length ? posts.map(p=>{
+    const u = findUserById(p.userId);
+    return `<div class="forum-post">
+      <h5>${p.title}</h5>
+      <p>${p.body}</p>
+      <div class="meta"><span><i class="bi bi-person-circle"></i> ${u?u.name:'Mahasiswa'}</span><span><i class="bi bi-clock"></i> ${timeAgo(p.createdAt)}</span></div>
+    </div>`;
+  }).join('') : `<div class="empty-state"><i class="bi bi-chat-square-dots"></i><p>Belum ada diskusi. Mulai yang pertama!</p></div>`;
+}
+function handlePostForum(){
+  const title = document.getElementById('forum-title').value.trim();
+  const body = document.getElementById('forum-body').value.trim();
+  if(!title || !body){ showToast('Lengkapi judul dan isi diskusi.','error'); return; }
+  const posts = dbGet(DB_KEYS.FORUM, []);
+  posts.unshift({id:uid('f'), userId:currentUser.id, title, body, createdAt:nowISO()});
+  dbSet(DB_KEYS.FORUM, posts);
+  document.getElementById('forum-title').value=''; document.getElementById('forum-body').value='';
+  showToast('Diskusi berhasil diposting.','success');
+  renderForum();
+}
+
+/* =========================================================
+   13. NAVIGATION
+========================================================= */
+function goView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.view===name));
+  if(name==='search') { renderFilterChips(); renderSearchResults(); }
+  if(name==='upload') renderUploadPreview();
+  if(name==='points') renderPoints();
+  if(name==='profile') renderProfile();
+  if(name==='dashboard') renderDashboard();
+  window.scrollTo(0,0);
+}
+
+function renderUploadPreview(){
+  document.getElementById('up-balance-preview').textContent = currentUser.points;
+  const countEl = document.getElementById('up-count');
+  const updateCost = ()=>{ document.getElementById('up-cost-preview').textContent = countEl.value || 0; };
+  countEl.oninput = updateCost; updateCost();
+}
+
+function openOverlay(name){
+  document.getElementById('overlay-'+name).classList.add('active');
+  if(name==='notif') renderNotifications();
+  if(name==='leaderboard') renderLeaderboard();
+  if(name==='history') renderHistory();
+  if(name==='forum') renderForum();
+  if(name==='edit-profile'){
+    document.getElementById('edit-name').value = currentUser.name;
+    document.getElementById('edit-univ').value = currentUser.university;
+    document.getElementById('edit-major').value = currentUser.major;
+  }
+}
+function closeOverlay(name){ document.getElementById('overlay-'+name).classList.remove('active'); }
+
+/* =========================================================
+   14. DARK MODE
+========================================================= */
+function toggleDarkMode(){
+  const isDark = document.body.classList.toggle('dark-mode');
+  dbSet(DB_KEYS.DARK, isDark);
+  document.getElementById('dark-icon').className = isDark ? 'bi bi-sun' : 'bi bi-moon-stars';
+  const statusEl = document.getElementById('dark-mode-status');
+  if(statusEl) statusEl.textContent = isDark ? 'Aktif' : 'Mati';
+}
+function applyStoredDarkMode(){
+  const isDark = dbGet(DB_KEYS.DARK, false);
+  if(isDark){ document.body.classList.add('dark-mode'); }
+  const iconEl = document.getElementById('dark-icon');
+  if(iconEl) iconEl.className = isDark ? 'bi bi-sun' : 'bi bi-moon-stars';
+}
+
+/* =========================================================
+   15. TOAST
+========================================================= */
+function showToast(msg, type='info'){
+  const box = document.getElementById('toast-box');
+  const el = document.createElement('div');
+  el.className = 'toast-academic ' + type;
+  const icon = type==='success' ? 'bi-check-circle-fill' : type==='error' ? 'bi-x-circle-fill' : 'bi-info-circle-fill';
+  el.innerHTML = `<i class="bi ${icon}"></i><span>${msg}</span>`;
+  box.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='.3s'; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+/* =========================================================
+   16. RENDER ALL (refresh every view + badges + notif dot)
+========================================================= */
+function renderAll(){
+  patchUserHelpers();
+  renderDashboard();
+  updateNotifDot();
+}
+
+/* =========================================================
+   17. APP INIT
+========================================================= */
+async function initApp(){
+  runSchemaMigration();
+  await seedDemoData();
+  applyStoredDarkMode();
+
+  const hasSession = checkSession();
+
+  setTimeout(()=>{
+    document.getElementById('splash-screen').style.display='none';
+    if(hasSession){
+      document.getElementById('main-app').style.display='block';
+      renderAll();
+    } else {
+      document.getElementById('auth-screen').style.display='flex';
+    }
+  }, 1300);
+
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  }
+}
+window.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
