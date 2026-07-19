@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Aplikasi Acha",
-  "short_name": "PWA Demo",
-  "description": "Aplikasi PWA responsif Offline",
+  "name": "ScholarMatch",
+  "short_name": "ScholarMatch",
+  "description": "Aplikasi Untuk Mencari Responden",
   "start_url": "./index.html", 
   "scope": "./",
   "display": "standalone",
