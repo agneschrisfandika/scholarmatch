@@ -24,13 +24,13 @@
   ],
   "screenshots": [
     {
-      "src": "icons/screenshot1.png",
-      "sizes": "1080x1920",
+      "src": "icons/805.png",
+      "sizes": "547x805",
       "type": "image/png"
     },
     {
-      "src": "icons/screenshot2.png",
-      "sizes": "1080x1920",
+      "src": "icons/806.png",
+      "sizes": "537x806",
       "type": "image/png"
     }
   ],
